@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新年のご挨拶</title>
+    <style>
+        /* 全体のスタイル */
+        body {
+            font-family: 'Yu Mincho', 'Hiragino Mincho ProN', 'MS Mincho', serif;
+            writing-mode: vertical-rl; /* 縦書き */
+            text-orientation: upright; /* 文字を縦向きに */
+            text-align: left; /* 左寄せ */
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            font-size: 40pt;
+            display: flex; /* フレックスボックスを使用 */
+            justify-content: center; /* 水平方向に中央配置 */
+            align-items: center; /* 垂直方向に中央配置 */
+            flex-direction: column; /* 文章を縦に並べる */
+            height: 100vh; /* 画面全体を使って配置 */
+        }
+
+        /* コンテナごとのスタイル */
+        .container {
+            display: inline-block;
+            margin: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            max-width: 90vw;
+            margin-left: 10px; /* 左に寄せる */
+        }
+
+        .char {
+            display: inline-block;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* スマホ対応 */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+                writing-mode: vertical-rl; /* 縦書きのまま */
+                text-orientation: upright;
+            }
+
+            .container {
+                margin: 5px;
+                max-width: 95vw;
+                margin-left: 5px; /* 左に寄せる */
+            }
+
+            h1 {
+                font-size: 1.2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="text-container-1"></div>
+    <div class="container" id="text-container-2"></div>
+    <div class="container" id="text-container-3"></div>
+
+    <script>
+        const texts = [
+            '新年あけましておめでとうございます',
+            '新しい年が素晴らしい年になりますように。',
+            '本年もどうぞよろしくお願い申し上げます。'
+        ];
+
+        texts.forEach((text, textIndex) => {
+            const container = document.getElementById(`text-container-${textIndex + 1}`);
+            text.split('').forEach((char, charIndex) => {
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.className = 'char';
+                span.style.animationDelay = `${charIndex * 0.2 + textIndex * 3.5}s`;
+                container.appendChild(span);
+            });
+        });
+    </script>
+</body>
+</html>
