@@ -10,32 +10,70 @@
             font-family: 'Yu Mincho', 'Hiragino Mincho ProN', 'MS Mincho', serif;
             writing-mode: vertical-rl; /* 縦書き */
             text-orientation: upright; /* 文字を縦向きに */
-            text-align: left; /* 左寄せ */
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-            font-size: 40pt;
-            display: flex; /* フレックスボックスを使用 */
-            justify-content: center; /* 水平方向に中央配置 */
-            align-items: center; /* 垂直方向に中央配置 */
-            flex-direction: column; /* 文章を縦に並べる */
-            height: 100vh; /* 画面全体を使って配置 */
+            font-size: 20pt;
+            background-image: url("/assets/mount-fuji-2297961_1280.jpg");
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
 
-        /* コンテナごとのスタイル */
+        /* フェードイン用オーバーレイ */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            z-index: 9999;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .overlay.fade-out {
+            animation: fadeOut 10s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        /* テキストコンテナ */
+        .container-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
         .container {
-            display: inline-block;
-            margin: 10px;
             overflow: hidden;
             white-space: nowrap;
-            max-width: 90vw;
-            margin-left: 10px; /* 左に寄せる */
+            margin-left: 10vw;
+            margin-right: 10vw;
         }
 
         .char {
             display: inline-block;
             opacity: 0;
             animation: fadeIn 1s forwards;
+            color: black; /* テキストの色 */
+            text-shadow: 
+                -1px -1px 0 white,
+                 1px -1px 0 white,
+                -1px  1px 0 white,
+                 1px  1px 0 white;
         }
 
         @keyframes fadeIn {
@@ -49,52 +87,122 @@
             }
         }
 
-        /* スマホ対応 */
-        @media (max-width: 768px) {
-            body {
-                font-size: 14px;
-                writing-mode: vertical-rl; /* 縦書きのまま */
-                text-orientation: upright;
-            }
+        /* 音楽再生確認ダイアログ */
+        #music-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            z-index: 10000;
+        }
 
-            .container {
-                margin: 5px;
-                max-width: 95vw;
-                margin-left: 5px; /* 左に寄せる */
-            }
+        #music-dialog button {
+            margin-top: 10px;
+            padding: 5px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            height: 70px;
+        }
 
-            h1 {
-                font-size: 1.2em;
-            }
+        #music-dialog button.ok {
+            background: #4CAF50;
+            color: white;
+        }
 
-            p {
-                font-size: 1em;
-            }
+        #music-dialog button.cancel {
+            background: #f44336;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="text-container-1"></div>
-    <div class="container" id="text-container-2"></div>
-    <div class="container" id="text-container-3"></div>
+    <!-- フェードイン用の黒背景 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- テキスト表示エリア -->
+    <div class="container-wrapper">
+        <div>
+            <div class="container" id="text-container-1"></div>
+            <div class="container" id="text-container-2"></div>
+            <div class="container" id="text-container-3"></div>
+            <div class="container" id="text-container-4"></div>
+        </div>
+    </div>
+
+    <!-- 音楽ファイル -->
+    <audio id="background-music" src="/assets/goraigou.mp3#t=11" preload="auto"></audio>
+
+    <!-- 音楽再生確認ダイアログ -->
+    <div id="music-dialog">
+        <p>音楽を再生しますか？</p>
+        <button class="ok">はい</button>
+        <button class="cancel">いいえ</button>
+    </div>
 
     <script>
-        const texts = [
-            '新年あけましておめでとうございます',
-            '新しい年が素晴らしい年になりますように。',
-            '本年もどうぞよろしくお願い申し上げます。'
-        ];
-
-        texts.forEach((text, textIndex) => {
-            const container = document.getElementById(`text-container-${textIndex + 1}`);
-            text.split('').forEach((char, charIndex) => {
-                const span = document.createElement('span');
-                span.textContent = char;
-                span.className = 'char';
-                span.style.animationDelay = `${charIndex * 0.2 + textIndex * 3.5}s`;
-                container.appendChild(span);
+        // 音楽再生関数
+        function playMusic() {
+            const music = document.getElementById('background-music');
+            music.volume = 0.5; // 音量を調整 (0.0 - 1.0)
+            music.play().catch(error => {
+                console.error('音楽の再生に失敗しました:', error);
             });
-        });
+        }
+
+        // テキストの表示
+        function showMessage() {
+            const texts = [
+                '新年あけましておめでとうございます',
+                '昨年は大変お世話になりました',
+                '新しい年が素晴らしい年になりますように',
+                '本年もどうぞよろしくお願い申し上げます'
+            ];
+
+            texts.forEach((text, textIndex) => {
+                const container = document.getElementById(`text-container-${textIndex + 1}`);
+                text.split('').forEach((char, charIndex) => {
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.className = 'char';
+                    span.style.animationDelay = `${charIndex * 0.2 + textIndex * 3.5}s`;
+                    container.appendChild(span);
+                });
+            });
+        }
+
+        // フェードイン開始
+        function startFadeIn() {
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('fade-out');
+        }
+
+        // 音楽再生確認ダイアログ
+        window.onload = () => {
+            const dialog = document.getElementById('music-dialog');
+            const okButton = dialog.querySelector('.ok');
+            const cancelButton = dialog.querySelector('.cancel');
+            const setShowMessageTime = 4500;
+
+            okButton.addEventListener('click', () => {
+                playMusic();
+                dialog.style.display = 'none';
+                startFadeIn();
+                setTimeout(showMessage, setShowMessageTime);
+            });
+
+            cancelButton.addEventListener('click', () => {
+                dialog.style.display = 'none';
+                startFadeIn();
+                setTimeout(showMessage, setShowMessageTime);
+            });
+        };
     </script>
 </body>
 </html>

@@ -17,11 +17,14 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// 静的ファイルを提供するための設定
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
+
 	http.HandleFunc("/", handler)
 
 	port := ":8080"
-	fmt.Println("Server is running on http://localhost" + port)
-	err := http.ListenAndServe(port, nil)
+	fmt.Println("Server is running on http://0.0.0.0" + port)
+	err := http.ListenAndServe("0.0.0.0"+port, nil)
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}
