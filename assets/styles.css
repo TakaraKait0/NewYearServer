@@ -1,0 +1,176 @@
+/* 全体のスタイル */
+body {
+    font-family: 'Yu Mincho', 'Hiragino Mincho ProN', 'MS Mincho', serif;
+    writing-mode: vertical-rl; /* 縦書き */
+    text-orientation: upright; /* 文字を縦向きに */
+    margin: 0;
+    padding: 0;
+    font-size: 20pt;
+    background-image: url("/assets/mount-fuji-2297961_1280.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* おみくじボタン（画像） */
+#omikuji-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 100px;
+    height: 100px;
+    background: url('../assets/omikuji/omikuji_button.png') no-repeat center center;
+    background-size: contain;
+    cursor: pointer;
+    z-index: 5000;
+    border: none;
+    outline: none;
+    display: none;
+}
+
+/* おみくじ結果モーダル */
+#omikuji-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scaleY(0);
+    transform-origin: top;
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10001;
+    display: none;
+    animation: scrollOpen 0.8s forwards;
+}
+
+@keyframes scrollOpen {
+    0% {
+        transform: translate(-50%, -50%) scaleY(0);
+    }
+    100% {
+        transform: translate(-50%, -50%) scaleY(1);
+    }
+}
+
+/* 結果画像 */
+#omikuji-modal img {
+    max-width: 300px;
+    margin: 20px 0;
+}
+
+#omikuji-modal button {
+    margin-top: 10px;
+    padding: 5px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #4CAF50;
+    color: white;
+}
+
+/* フェードイン用オーバーレイ */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    z-index: 9999;
+    opacity: 1;
+    visibility: visible;
+}
+
+.overlay.fade-out {
+    animation: fadeOut 10s forwards;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* テキストコンテナ */
+.container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    writing-mode: vertical-rl; /* 縦書き */
+    text-orientation: upright; /* 文字を縦向きに */
+}
+
+.container {
+    overflow: hidden;
+    white-space: nowrap;
+    margin-left: 10vw;
+    margin-right: 10vw;
+}
+
+.char {
+    display: inline-block;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    color: black; /* テキストの色 */
+    text-shadow: 
+        -1px -1px 0 white,
+         1px -1px 0 white,
+        -1px  1px 0 white,
+         1px  1px 0 white;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 音楽再生確認ダイアログ */
+#music-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    z-index: 10000;
+}
+
+#music-dialog button {
+    margin-top: 10px;
+    padding: 5px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 70px;
+}
+
+#music-dialog button.ok {
+    background: #4CAF50;
+    color: white;
+}
+
+#music-dialog button.cancel {
+    background: #f44336;
+    color: white;
+}

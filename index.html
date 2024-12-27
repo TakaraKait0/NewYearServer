@@ -4,123 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新年のご挨拶</title>
-    <style>
-        /* 全体のスタイル */
-        body {
-            font-family: 'Yu Mincho', 'Hiragino Mincho ProN', 'MS Mincho', serif;
-            writing-mode: vertical-rl; /* 縦書き */
-            text-orientation: upright; /* 文字を縦向きに */
-            margin: 0;
-            padding: 0;
-            font-size: 20pt;
-            background-image: url("/assets/mount-fuji-2297961_1280.jpg");
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        /* フェードイン用オーバーレイ */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: black;
-            z-index: 9999;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .overlay.fade-out {
-            animation: fadeOut 10s forwards;
-        }
-
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                visibility: hidden;
-            }
-        }
-
-        /* テキストコンテナ */
-        .container-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            overflow: hidden;
-            white-space: nowrap;
-            margin-left: 10vw;
-            margin-right: 10vw;
-        }
-
-        .char {
-            display: inline-block;
-            opacity: 0;
-            animation: fadeIn 1s forwards;
-            color: black; /* テキストの色 */
-            text-shadow: 
-                -1px -1px 0 white,
-                 1px -1px 0 white,
-                -1px  1px 0 white,
-                 1px  1px 0 white;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 音楽再生確認ダイアログ */
-        #music-dialog {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px;
-            z-index: 10000;
-        }
-
-        #music-dialog button {
-            margin-top: 10px;
-            padding: 5px 15px;
-            font-size: 14px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            height: 70px;
-        }
-
-        #music-dialog button.ok {
-            background: #4CAF50;
-            color: white;
-        }
-
-        #music-dialog button.cancel {
-            background: #f44336;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
     <!-- フェードイン用の黒背景 -->
@@ -136,14 +20,22 @@
         </div>
     </div>
 
-    <!-- 音楽ファイル -->
-    <audio id="background-music" src="/assets/goraigou.mp3#t=11" preload="auto"></audio>
+    <audio id="background-music" src="/assets/otoso.mp3" preload="auto"></audio>
 
     <!-- 音楽再生確認ダイアログ -->
     <div id="music-dialog">
         <p>音楽を再生しますか？</p>
         <button class="ok">はい</button>
         <button class="cancel">いいえ</button>
+    </div>
+
+    <!-- おみくじボタン -->
+    <button id="omikuji-btn"></button>
+
+    <!-- おみくじ結果モーダル -->
+    <div id="omikuji-modal">
+        <img id="omikuji-result-img" src="" alt="おみくじ結果">
+        <button onclick="closeOmikuji()">閉じる</button>
     </div>
 
     <script>
@@ -165,16 +57,28 @@
                 '本年もどうぞよろしくお願い申し上げます'
             ];
 
+            let totalAnimationTime = 0;
+
             texts.forEach((text, textIndex) => {
                 const container = document.getElementById(`text-container-${textIndex + 1}`);
                 text.split('').forEach((char, charIndex) => {
                     const span = document.createElement('span');
                     span.textContent = char;
                     span.className = 'char';
-                    span.style.animationDelay = `${charIndex * 0.2 + textIndex * 3.5}s`;
+                    const animationDelay = charIndex * 0.2 + textIndex * 3.5; // 遅延時間を計算
+                    span.style.animationDelay = `${animationDelay}s`;
                     container.appendChild(span);
+
+                    // 最後のアニメーション時間を記録
+                    totalAnimationTime = Math.max(totalAnimationTime, animationDelay);
                 });
             });
+
+            // テキスト表示後にボタンを表示
+            setTimeout(() => {
+                const omikujiBtn = document.getElementById('omikuji-btn');
+                omikujiBtn.style.display = 'block';
+            }, (totalAnimationTime + 1) * 1000); // アニメーション時間 + 1秒余裕
         }
 
         // フェードイン開始
@@ -203,6 +107,59 @@
                 setTimeout(showMessage, setShowMessageTime);
             });
         };
+
+        // おみくじ結果と対応する画像
+        const omikujiResults = [
+            { name: '大吉', image: 'assets/omikuji/daikichi.png', probability: 0.11 },
+            { name: '吉', image: 'assets/omikuji/kichi.png', probability: 0.17 },
+            { name: '中吉', image: 'assets/omikuji/chukichi.png', probability: 0.18 },
+            { name: '小吉', image: 'assets/omikuji/shokichi.png', probability: 0.24 },
+            { name: '末吉', image: 'assets/omikuji/suekichi.png', probability: 0.24 },
+            { name: '凶', image: 'assets/omikuji/kyo.png', probability: 0.05 },
+            { name: '大凶', image: 'assets/omikuji/daikyo.png', probability: 0.01 }
+        ];
+
+        // 確率に基づいておみくじの結果を選ぶ
+        function getOmikujiResult() {
+            const random = Math.random();
+            let cumulativeProbability = 0;
+
+            for (const result of omikujiResults) {
+                cumulativeProbability += result.probability;
+                if (random <= cumulativeProbability) {
+                    return result;
+                }
+            }
+
+            // フォールバック
+            return omikujiResults[0];
+        }
+
+        /*
+        おみくじ結果を表示
+         */
+        function showOmikuji() {
+            const result = getOmikujiResult();
+            const resultImg = document.getElementById('omikuji-result-img');
+            resultImg.src = result.image;
+            resultImg.alt = result.name;
+
+            const modal = document.getElementById('omikuji-modal');
+            modal.style.display = 'block';
+        }
+
+        /**
+         * おみくじモーダルを閉じる
+         */
+        function closeOmikuji() {
+            const modal = document.getElementById('omikuji-modal');
+            modal.style.display = 'none';
+        }
+
+        // おみくじボタンのイベントリスナー
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('omikuji-btn').onclick = showOmikuji;
+        });
     </script>
 </body>
 </html>
