@@ -1,6 +1,6 @@
 /* 全体のスタイル */
 body {
-    font-family: 'Yu Mincho', 'Hiragino Mincho ProN', 'MS Mincho', serif;
+    font-family: 'Dancing Script', cursive;
     writing-mode: vertical-rl; /* 縦書き */
     text-orientation: upright; /* 文字を縦向きに */
     margin: 0;
