@@ -27,7 +27,7 @@ func main() {
 
 	port := ":8080"
 	fmt.Println("Server is running on http://localhost" + port)
-	err := http.ListenAndServe(port, nil)
+	err := http.ListenAndServe("0.0.0.0"+port, nil)
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}
