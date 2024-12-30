@@ -1,11 +1,67 @@
-// 音楽再生関数
-function playMusic() {
-    const music = document.getElementById('background-music');
-    music.volume = 0.5; // 音量を調整 (0.0 - 1.0)
-    music.play().catch(error => {
-        console.error('音楽の再生に失敗しました:', error);
-    });
+// BGMリスト
+const bgmList = [
+    '/assets/goraigou.mp3#t=15',
+    '/assets/otoso.mp3',
+    '/assets/koto-shimoyoroshiku.mp3',
+    '/assets/sunrise.mp3',
+    '/assets/the-first-sunrise.mp3'
+];
+
+// 現在のBGMインデックス
+let currentBGMIndex = 0;
+
+// audio要素を取得
+const bgmPlayer = document.getElementById('background-music');
+
+// BGMを再生する関数
+function playMusic(index) {
+    if (index < bgmList.length) {
+        bgmPlayer.src = bgmList[index];
+        bgmPlayer.play().catch(error => {
+            console.error('音楽の再生に失敗しました:', error);
+        });
+    }
 }
+
+// BGMが終了した時の処理
+bgmPlayer.addEventListener('ended', () => {
+    currentBGMIndex++;
+    if (currentBGMIndex < bgmList.length) {
+        playMusic(currentBGMIndex); // 次のBGMを再生
+    } else {
+        currentBGMIndex = 0; // 最初に戻る（ループする場合）
+        playMusic(currentBGMIndex);
+    }
+});
+
+// 初回再生
+function startBackgroundMusic() {
+    playMusic(currentBGMIndex);
+}
+
+// 音楽再生確認ダイアログ
+document.addEventListener('DOMContentLoaded', () => {
+    const dialog = document.getElementById('music-dialog');
+    const okButton = dialog.querySelector('.ok');
+    const cancelButton = dialog.querySelector('.cancel');
+    const setShowMessageTime = 4500;
+
+    okButton.addEventListener('click', () => {
+        startBackgroundMusic();
+        dialog.style.display = 'none';
+        startFadeIn();
+        setTimeout(showMessage, setShowMessageTime);
+    });
+
+    cancelButton.addEventListener('click', () => {
+        dialog.style.display = 'none';
+        startFadeIn();
+        setTimeout(showMessage, setShowMessageTime);
+    });
+
+    // おみくじボタンのイベントリスナー
+    document.getElementById('omikuji-btn').onclick = showOmikuji;
+});
 
 // テキストの表示
 function showMessage() {
@@ -46,27 +102,6 @@ function startFadeIn() {
     overlay.classList.add('fade-out');
 }
 
-// 音楽再生確認ダイアログ
-document.addEventListener('DOMContentLoaded', () => {
-    const dialog = document.getElementById('music-dialog');
-    const okButton = dialog.querySelector('.ok');
-    const cancelButton = dialog.querySelector('.cancel');
-    const setShowMessageTime = 4500;
-
-    okButton.addEventListener('click', () => {
-        playMusic();
-        dialog.style.display = 'none';
-        startFadeIn();
-        setTimeout(showMessage, setShowMessageTime);
-    });
-
-    cancelButton.addEventListener('click', () => {
-        dialog.style.display = 'none';
-        startFadeIn();
-        setTimeout(showMessage, setShowMessageTime);
-    });
-});
-
 // おみくじ結果と対応する画像
 const omikujiResults = [
     { name: '大吉', image: 'assets/omikuji/daikichi.png', probability: 0.11 },
@@ -94,9 +129,7 @@ function getOmikujiResult() {
     return omikujiResults[0];
 }
 
-/*
-おみくじ結果を表示
- */
+// おみくじ結果を表示
 function showOmikuji() {
     const result = getOmikujiResult();
     const resultImg = document.getElementById('omikuji-result-img');
@@ -107,15 +140,8 @@ function showOmikuji() {
     modal.style.display = 'block';
 }
 
-/*
-おみくじモーダルを閉じる
-*/
+// おみくじモーダルを閉じる
 function closeOmikuji() {
     const modal = document.getElementById('omikuji-modal');
     modal.style.display = 'none';
 }
-
-// おみくじボタンのイベントリスナー
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('omikuji-btn').onclick = showOmikuji;
-});

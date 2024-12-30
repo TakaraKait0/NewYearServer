@@ -5,7 +5,7 @@ body {
     text-orientation: upright; /* 文字を縦向きに */
     margin: 0;
     padding: 0;
-    font-size: 20pt;
+    font-size: 30pt;
     background-image: url("/assets/mount-fuji-2297961_1280.jpg");
     background-size: cover;
     background-position: center center;
@@ -173,4 +173,29 @@ body {
 #music-dialog button.cancel {
     background: #f44336;
     color: white;
+}
+
+/* スマホ用フォントサイズ */
+@media (max-width: 768px) {
+    body {
+        font-size: 14pt; /* スマホ向けに小さめに調整 */
+    }
+
+    #omikuji-modal {
+        padding: 10px;
+    }
+
+    #omikuji-modal img {
+        max-width: 200px; /* 画像サイズも調整 */
+    }
+
+    #music-dialog button {
+        font-size: 12px; /* ボタンテキストを小さく */
+        height: 50px; /* ボタンサイズ調整 */
+    }
+
+    .container {
+        margin-left: 5vw;
+        margin-right: 5vw; /* テキストコンテナの余白を縮小 */
+    }
 }
